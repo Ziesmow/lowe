@@ -19,6 +19,7 @@ pub fn main() !void {
             try HelpSombody();
         } else if (lwe.CompareString(user, "exit")) {
             try stdout.print("quiting a program with save", .{});
+            try FromFile();
             std.process.exit(0);
         } else if (lwe.CompareString(user, "add")) {
             try AddGame(&list);
@@ -97,6 +98,23 @@ pub fn ChangeOrder(list: *ArrayList([]const u8)) !void {
     }
     list.items[newposition] = temp;
     try ListTool(list);
+}
+
+pub fn ToFile(list: *ArrayList([]const u8)) !void {
+    var file = try std.fs.cwd().createFile("list.json", .{});
+    defer file.close();
+    for (list.items) |value| {
+        try file.writeAll(value);
+        try file.writeAll(" ");
+    }
+}
+
+pub fn FromFile() !void {
+    var file = try std.fs.cwd().openFile("list.json", .{});
+    defer file.close();
+    var buffer: [1024]u8 = undefined;
+    const readed = try file.reader().read(&buffer);
+    try stdout.print("{any}", .{});
 }
 
 pub fn HelpSombody() !void {
